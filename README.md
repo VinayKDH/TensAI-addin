@@ -1,190 +1,332 @@
-# TensAI Office Add-in
+# TENS AI Office Add-in
 
-This is a unified Office Add-in that works across Word, Excel, PowerPoint, and Outlook, integrating with TensAI services at www.dev2.tens-ai.com.
+A comprehensive Microsoft Office add-in that integrates TENS AI's powerful AI capabilities directly into Word, Excel, PowerPoint, and Outlook.
 
 ## Features
 
-- **Multi-Host Support**: Works seamlessly across Word, Excel, PowerPoint, and Outlook
-- **Excel Integration**: Advanced data manipulation and analysis in Excel workbooks
-- **Word Integration**: Document processing and content analysis in Word
-- **PowerPoint Integration**: Presentation enhancement and content generation
-- **Outlook Integration**: Email processing and productivity features
-- **Data Import/Export**: Import and export data between Office applications and TensAI
-- **AI Analysis**: Run AI-powered analysis on your Office documents
-- **Real-time Collaboration**: Connect with TensAI dashboard for real-time insights
-
-## Project Structure
-
-```
-TensAI Office Addin/
-├── manifest.xml          # Office Add-in manifest file
-├── index.html           # Main add-in page
-├── taskpane.html        # Task pane interface
-├── commands.html        # Add-in commands
-├── package.json         # Node.js dependencies and scripts
-├── assets/              # Icons and images
-│   ├── icon-16.png
-│   ├── icon-32.png
-│   ├── icon-64.png
-│   ├── icon-80.png
-│   ├── icon-128.png
-│   └── logo-filled.png
-└── README.md           # This file
-```
+- **Multi-Office Support**: Works seamlessly across Word, Excel, PowerPoint, and Outlook
+- **AI-Powered Content**: Generate, analyze, and improve content using TENS AI's API
+- **Smart Text Processing**: Analyze sentiment, extract keywords, and summarize content
+- **Content Generation**: Create professional content based on prompts and context
+- **Writing Enhancement**: Improve grammar, clarity, and overall text quality
+- **Easy Integration**: Simple API key authentication and intuitive interface
 
 ## Prerequisites
 
-- Node.js (v14 or higher)
-- npm
-- Office 365 or Office 2016/2019/2021
-- Access to www.dev2.tens-ai.com
+- Node.js (version 16 or higher)
+- npm (comes with Node.js)
+- Microsoft Office 365 or Office 2019/2021
+- TENS AI API key (get from https://www.dev2.tens-ai.com/api-keys)
 
-## Installation
+## Installation & Setup
 
-1. **Install dependencies:**
-   ```bash
-   npm install
-   ```
+### Step 1: Install Dependencies
 
-2. **Validate the manifest:**
-   ```bash
-   npm run validate
-   ```
+```bash
+# Navigate to the project directory
+cd "/Users/vinaykumar/Desktop/Outlook Addon"
 
-## Development
+# Install Node.js dependencies
+npm install
+```
 
-### Local Testing
+### Step 2: Configure Environment
 
-To test the add-in locally, you'll need to:
+```bash
+# Copy the environment template
+cp env.example .env
 
-1. **Host the files on www.dev2.tens-ai.com:**
-   - Upload all HTML files to your web server
-   - Upload the assets folder with all icons
-   - Ensure HTTPS is enabled
+# Edit the .env file with your configuration
+# At minimum, you need to set your TENS AI API key
+```
 
-2. **Sideload the add-in:**
-   ```bash
-   npm run sideload
-   ```
+### Step 3: Start the Development Server
 
-### Available Scripts
+```bash
+# Start the server in development mode
+npm run dev
 
-- `npm run validate` - Validate the manifest file
-- `npm run start` - Start local development server
-- `npm run stop` - Stop local development server
-- `npm run sideload` - Sideload the add-in to Office
+# Or start in production mode
+npm start
+```
 
-## Deployment
+The server will start on `https://localhost:3000`
 
-### Option 1: Centralized Deployment (Recommended for Organizations)
+## Manual Testing Instructions
 
-1. Upload the manifest.xml and all referenced files to your web server
-2. Use Microsoft 365 Admin Center to deploy the add-in to your organization
-3. Users will see the add-in automatically in their Office applications
+### Phase 1: Server Testing
 
-### Option 2: SharePoint App Catalog
+#### 1.1 Test Server Health
+```bash
+# Open a new terminal and test the health endpoint
+curl -k https://localhost:3000/health
 
-1. Upload the add-in files to a SharePoint App Catalog
-2. Deploy through SharePoint for on-premises environments
+# Expected response:
+# {"status":"healthy","timestamp":"2024-01-01T00:00:00.000Z","version":"1.0.0"}
+```
 
-### Option 3: AppSource (Public Distribution)
+#### 1.2 Test Static Files
+- Open browser and navigate to: `https://localhost:3000/taskpane.html`
+- You should see the TENS AI Assistant interface
+- Check that all CSS and JavaScript files load without errors
 
-1. Package the add-in with all required files
-2. Submit to AppSource for public distribution
-3. Follow Microsoft's validation and approval process
+#### 1.3 Test API Endpoints
+```bash
+# Test TENS AI health check (without API key)
+curl -k https://localhost:3000/api/aimlgyan/health
 
-## Configuration
+# Test with API key (replace YOUR_API_KEY)
+curl -k -H "x-api-key: YOUR_API_KEY" https://localhost:3000/api/aimlgyan/health
+```
 
-### Required Files on Web Server
+### Phase 2: Office Integration Testing
 
-The following files must be hosted on www.dev2.tens-ai.com:
+#### 2.1 Install the Add-in in Office
 
-- `index.html` - Main add-in page
-- `taskpane.html` - Task pane interface
-- `commands.html` - Add-in commands
-- `assets/icon-16.png` - 16x16 icon
-- `assets/icon-32.png` - 32x32 icon
-- `assets/icon-80.png` - 80x80 icon
+**For Office 365 Online:**
+1. Open any Office app (Word, Excel, PowerPoint, or Outlook)
+2. Go to Insert > Add-ins > Upload My Add-in
+3. Upload the `manifest.xml` file
+4. The add-in should appear in the ribbon
 
-### HTTPS Requirement
+**For Office Desktop:**
+1. Open any Office app
+2. Go to Insert > My Add-ins > Upload My Add-in
+3. Browse to the `manifest.xml` file
+4. Click Upload
 
-All URLs in the manifest must use HTTPS. Ensure your web server has a valid SSL certificate.
+**For Development Testing:**
+1. Open Office app
+2. Go to Insert > Add-ins > Upload My Add-in
+3. Use the manifest URL: `https://localhost:3000/manifest.xml`
+4. Click Upload
 
-## Usage
+#### 2.2 Test Add-in Loading
+1. After installation, look for "TENS AI" group in the Home ribbon
+2. Click the "AI Assistant" button
+3. The task pane should open on the right side
+4. Verify the interface loads correctly
 
-### Installation
-1. **Install the add-in** in any Office application (Word, Excel, PowerPoint, or Outlook)
-2. **Open the task pane** by clicking the "Open TensAI" button in the Home ribbon (or appropriate tab)
+### Phase 3: Authentication Testing
 
-### Features by Application
+#### 3.1 Test API Key Authentication
+1. In the task pane, enter your TENS AI API key
+2. Click "Connect"
+3. Verify success message appears
+4. Check that the main interface becomes visible
 
-#### Excel
-- **Load Sample Data**: Populate worksheets with sample data
-- **Get Worksheet Info**: View current worksheet information
-- **Data Import/Export**: Import/export data between Excel and TensAI
-- **AI Analysis**: Run analysis on spreadsheet data
+#### 3.2 Test Invalid API Key
+1. Enter an invalid API key
+2. Click "Connect"
+3. Verify error message appears
+4. Check that authentication fails gracefully
 
-#### Word
-- **Document Processing**: Analyze and enhance Word documents
-- **Content Generation**: Generate content using TensAI
-- **Data Import/Export**: Import/export document data
+### Phase 4: Core Functionality Testing
 
-#### PowerPoint
-- **Presentation Enhancement**: Improve presentations with AI
-- **Content Generation**: Generate slides and content
-- **Data Import/Export**: Import/export presentation data
+#### 4.1 Test Text Selection (Word)
+1. Open Microsoft Word
+2. Type some sample text
+3. Select a portion of the text
+4. In the add-in, click "Get Selected Text"
+5. Verify the selected text appears in the content area
 
-#### Outlook
-- **Email Processing**: Analyze and enhance emails
-- **Productivity Features**: Improve email workflow
-- **Data Import/Export**: Import/export email data
+#### 4.2 Test Text Selection (Excel)
+1. Open Microsoft Excel
+2. Enter some text in cells
+3. Select a range of cells
+4. In the add-in, click "Get Selected Text"
+5. Verify the cell contents appear in the content area
 
-### Common Features
-- **Open TensAI Dashboard**: Access the web interface
-- **AI Analysis**: Run AI-powered analysis on your content
-- **Real-time Integration**: Connect with TensAI services
+#### 4.3 Test Text Selection (PowerPoint)
+1. Open Microsoft PowerPoint
+2. Create a slide with text
+3. Select text in a text box
+4. In the add-in, click "Get Selected Text"
+5. Verify the selected text appears in the content area
 
-## API Integration
+#### 4.4 Test Text Selection (Outlook)
+1. Open Microsoft Outlook
+2. Create a new email
+3. Type some content in the email body
+4. In the add-in, click "Get Selected Text"
+5. Verify the email content appears in the content area
 
-The add-in is configured to work with TensAI services at:
-- **Base URL**: https://www.dev2.tens-ai.com
-- **API Endpoint**: https://www.dev2.tens-ai.com/api
+### Phase 5: AI Processing Testing
+
+#### 5.1 Test Content Analysis
+1. Enter some text in the content area
+2. Set prompt to "Analyze this text for sentiment and key themes"
+3. Click "Process with AI"
+4. Verify results appear in the results section
+5. Check that metadata is displayed
+
+#### 5.2 Test Content Generation
+1. Enter context text in the content area
+2. Set prompt to "Generate a professional summary of this content"
+3. Click "Process with AI"
+4. Verify generated content appears
+5. Test the "Insert into Document" functionality
+
+#### 5.3 Test Writing Improvement
+1. Enter text with grammar issues
+2. Set prompt to "Improve the grammar and clarity of this text"
+3. Click "Process with AI"
+4. Verify improved text is generated
+5. Test inserting the improved text
+
+#### 5.4 Test Quick Actions
+1. Click "Analyze Text" quick action button
+2. Verify prompt is automatically filled
+3. Click "Process with AI"
+4. Repeat for other quick actions (Generate Content, Improve Writing, Summarize)
+
+### Phase 6: Results Management Testing
+
+#### 6.1 Test Result Insertion
+1. Process some content with AI
+2. Click "Insert into Document"
+3. Verify the result is inserted into the Office document
+4. Test in different Office applications
+
+#### 6.2 Test Copy to Clipboard
+1. Process some content with AI
+2. Click "Copy to Clipboard"
+3. Paste into a text editor
+4. Verify the content was copied correctly
+
+#### 6.3 Test Tab Switching
+1. Process content with AI
+2. Click between "Result" and "Metadata" tabs
+3. Verify content switches correctly
+
+### Phase 7: Settings Testing
+
+#### 7.1 Test API Key Management
+1. Click "Change" next to the API key display
+2. Verify authentication section appears
+3. Enter a new API key
+4. Verify the key is updated
+
+#### 7.2 Test Response Length Settings
+1. Change the response length setting
+2. Process some content
+3. Verify the response length matches the setting
+
+#### 7.3 Test AI Model Selection
+1. Change the AI model setting
+2. Process some content
+3. Verify the selected model is used
+
+### Phase 8: Error Handling Testing
+
+#### 8.1 Test Network Errors
+1. Disconnect from internet
+2. Try to process content
+3. Verify appropriate error message appears
+
+#### 8.2 Test API Errors
+1. Use an invalid API key
+2. Try to process content
+3. Verify error handling works correctly
+
+#### 8.3 Test Empty Input
+1. Leave content area empty
+2. Try to process
+3. Verify validation error appears
+
+### Phase 9: Cross-Application Testing
+
+#### 9.1 Test Word Integration
+- Create a document with various content types
+- Test all add-in features
+- Verify text insertion works correctly
+
+#### 9.2 Test Excel Integration
+- Create a spreadsheet with data
+- Test text selection from cells
+- Verify content generation works
+
+#### 9.3 Test PowerPoint Integration
+- Create a presentation with slides
+- Test text selection from text boxes
+- Verify content insertion works
+
+#### 9.4 Test Outlook Integration
+- Create emails with different content
+- Test text selection from email body
+- Verify content generation and insertion
 
 ## Troubleshooting
 
 ### Common Issues
 
-1. **Add-in not loading**: Check that all URLs in manifest.xml are accessible
-2. **Icons not displaying**: Ensure icon files are uploaded to the correct paths
-3. **HTTPS errors**: Verify SSL certificate is valid and properly configured
+#### Server Won't Start
+```bash
+# Check if port 3000 is in use
+lsof -i :3000
 
-### Validation Errors
+# Kill process if needed
+kill -9 <PID>
 
-If you encounter validation errors:
+# Try a different port
+PORT=3001 npm start
+```
 
-1. **Missing Support URL**: Add a valid support URL in manifest.xml
-2. **Invalid AppDomain**: Ensure domains are valid and accessible
-3. **Unreachable URLs**: Verify all referenced files are hosted and accessible
+#### SSL Certificate Issues
+```bash
+# For development, you can use self-signed certificates
+# The browser will show a security warning - click "Advanced" and "Proceed"
+```
+
+#### Office Add-in Won't Load
+1. Check that the manifest.xml is accessible at `https://localhost:3000/manifest.xml`
+2. Verify all URLs in the manifest use HTTPS
+3. Check browser console for JavaScript errors
+4. Ensure Office app is up to date
+
+#### API Connection Issues
+1. Verify your API key is correct
+2. Check that https://www.dev2.tens-ai.com is accessible
+3. Test the API directly: `curl -H "Authorization: Bearer YOUR_API_KEY" https://api.dev2.tens-ai.com/health`
+
+### Debug Mode
+
+Enable debug logging:
+```bash
+# Set debug environment variable
+DEBUG=* npm start
+
+# Or check server logs
+tail -f logs/app.log
+```
+
+## Production Deployment
+
+### Using Docker
+```bash
+# Build the Docker image
+docker build -t aimlgyan-office-addon .
+
+# Run with Docker Compose
+docker-compose up -d
+```
+
+### Manual Deployment
+1. Set up a web server (nginx, Apache)
+2. Configure SSL certificates
+3. Update manifest.xml with production URLs
+4. Deploy the application files
+5. Configure reverse proxy for API calls
 
 ## Support
 
-For support and questions:
-- **Website**: https://www.dev2.tens-ai.com
-- **Support**: https://www.dev2.tens-ai.com/support
+For issues and support:
+- Check the troubleshooting section above
+- Review server logs for error details
+- Contact TENS AI support at https://www.dev2.tens-ai.com/support
 
 ## License
 
 MIT License - see LICENSE file for details.
 
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Test thoroughly
-5. Submit a pull request
-
-## Version History
-
-- **v1.0.0** - Initial release with basic TensAI integration
-# TensAI-addin
+# OutlookAddon
